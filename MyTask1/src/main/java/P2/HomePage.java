@@ -1,6 +1,5 @@
 package P2;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,6 +26,7 @@ public class HomePage extends PractoBase {
             Thread.sleep(3000);
             driver.findElement(intoIcon).click();
             Thread.sleep(3000);
+            
             Properties prop = new Properties();
             FileInputStream input = new FileInputStream("src/main/java/Config/Config.properties");
             prop.load(input);
@@ -35,14 +35,14 @@ public class HomePage extends PractoBase {
             Thread.sleep(3000);
             List<WebElement> hyderabdLocationList = driver.findElements(hyderabdLocation);
             Thread.sleep(3000);
-            hyderabdLocationList.get(1).click();
+            hyderabdLocationList.get(2).click();
             Thread.sleep(3000);
             driver.findElement(doctorInput).click();
             Thread.sleep(1000);
             
             List<WebElement> doctorsList = driver.findElements(doctors);           
             Thread.sleep(1000);
-            doctorsList.get(1).click();
+            doctorsList.get(0).click();
             
             Thread.sleep(3000);
             String firstDoctorProfession = driver.findElement(profession).getText();  // Get the first doctor's profession

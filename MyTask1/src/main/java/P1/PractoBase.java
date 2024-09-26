@@ -2,6 +2,7 @@ package P1;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Properties;
 import org.openqa.selenium.edge.EdgeDriver;
 import com.aventstack.extentreports.ExtentReports;
@@ -31,12 +32,12 @@ public class PractoBase {
         System.out.println("System setup DONE");
     }
     public void openUrl() throws IOException, InterruptedException {
+    	driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         Properties prop = new Properties();
         FileInputStream input = new FileInputStream("src/main/java/Config/Config.properties");
         prop.load(input);
         String url = prop.getProperty("url");        
         driver.get(url);
-        Thread.sleep(2000);               
     }
     public void closeUrl() {
         if (driver != null) {

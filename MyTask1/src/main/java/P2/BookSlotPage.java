@@ -8,28 +8,24 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 public class BookSlotPage extends HomePage {
-    By bookButton = By.xpath("//*[@id=\"container\"]/div/div[4]/div/div[1]/div/div[6]/div[1]/div/div[2]/div/div/div[2]/div/button");
+    By bookButton = By.xpath("//*[@id=\"container\"]/div/div[4]/div/div[1]/div/div[2]/div[1]/div/div[2]/div/div/div[2]/div/button");
     By slots = By.xpath("//div[@data-qa-id='date_selector']");
-    By beforeName = By.xpath("//*[@id='container']/div/div[4]/div/div[1]/div/div[6]/div[1]/div/div[1]/div[2]/a/div/h2");
+    By beforeName = By.xpath("//*[@id=\"container\"]/div/div[4]/div/div[1]/div/div[2]/div[1]/div/div[1]/div[2]/a/div/h2");
     By afterName = By.xpath("//div[@data-qa-id='doctor_name']"); 
     By afterTime = By.xpath("//*[@id='container']/div[2]/div/div[1]/div/div[1]/div[2]/div[1]/div[2]/span[2]");        
     By afterDate_locator = By.xpath("(//span[@class=\"u-bold\"])[1]");  
     String doctorNameBefore;
 
-    // Compare doctor details
     public String compareDetails() {
         doctorNameBefore = driver.findElement(beforeName).getText().trim();
         return doctorNameBefore;
     }
-    
-    
+   
     public boolean bookSlot() throws InterruptedException {
-    	System.out.println("doc name"+doctorNameBefore);
-        driver.findElement(bookButton).click();
-        
-       
-        
+    	System.out.println("doctor name"+doctorNameBefore);
+        driver.findElement(bookButton).click();     
         Thread.sleep(2000);
+        System.out.println("book button clicked");
         List<WebElement> timesFrames = driver.findElements(slots);
         String beforeTimeString = "";
         String afterTimeString = "";
@@ -47,7 +43,6 @@ public class BookSlotPage extends HomePage {
             }
         	i+=1;
         }
-        // Capture the time slots and proceed
         List<WebElement> Slots = driver.findElements(By.xpath("//div[@data-qa-id='slot_time']"));
         for (WebElement slot : Slots) {
             beforeTimeString = slot.getText(); 
@@ -61,9 +56,7 @@ public class BookSlotPage extends HomePage {
             System.out.println("Doctor name matches.");
         } else {
             System.out.println("Doctor name does not match!");
-        }
-        
-        
+        }                
         afterTimeString = driver.findElement(this.afterTime).getText(); // Capture the after time as String
         System.out.println("Before Time: " + beforeTimeString + " | After Time: " + afterTimeString);
 
@@ -101,10 +94,7 @@ public class BookSlotPage extends HomePage {
         else {
         	System.out.println("Dates  not same");
         }
-
-      
-      
-        
+       
     
         return doctor_matched && time_matched;
         
