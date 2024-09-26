@@ -13,15 +13,19 @@ public class PractoBase {
     protected  static ExtentSparkReporter htmlReporter;
     protected  static ExtentReports report;
     protected  static ExtentTest test;
+    public void report() {
+    	 htmlReporter = new ExtentSparkReporter(new File("C:\\Users\\SunithaJ\\Desktop\\MavenReport"));
+         htmlReporter.config().setReportName("Practo Report");
+         htmlReporter.config().setDocumentTitle("PractoTask Automation Report");
+         htmlReporter.config().setTheme(Theme.STANDARD);
+         report = new ExtentReports();
+         report.setSystemInfo("Environment", "QA");
+         report.setSystemInfo("Tester", "Sunitha");
+         report.attachReporter(htmlReporter);
+    	
+    }
     public void setUp() {    	
-   	 htmlReporter = new ExtentSparkReporter(new File("C:\\Users\\SunithaJ\\Desktop\\MavenReport"));
-        htmlReporter.config().setReportName("Practo Report");
-        htmlReporter.config().setDocumentTitle("PractoTask Automation Report");
-        htmlReporter.config().setTheme(Theme.STANDARD);
-        report = new ExtentReports();
-        report.setSystemInfo("Environment", "QA");
-        report.setSystemInfo("Tester", "Sunitha");
-        report.attachReporter(htmlReporter);
+   	
         driver = new EdgeDriver();
         driver.manage().window().maximize();
         System.out.println("System setup DONE");

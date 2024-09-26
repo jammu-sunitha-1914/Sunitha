@@ -1,93 +1,119 @@
 package P2;
-
 import java.util.List;
+import java.util.Locale;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 public class BookSlotPage extends HomePage {
     By bookButton = By.xpath("//*[@id=\"container\"]/div/div[4]/div/div[1]/div/div[6]/div[1]/div/div[2]/div/div/div[2]/div/button");
     By slots = By.xpath("//div[@data-qa-id='date_selector']");
+    By beforeName = By.xpath("//*[@id='container']/div/div[4]/div/div[1]/div/div[6]/div[1]/div/div[1]/div[2]/a/div/h2");
+    By afterName = By.xpath("//div[@data-qa-id='doctor_name']"); 
+    By afterTime = By.xpath("//*[@id='container']/div[2]/div/div[1]/div/div[1]/div[2]/div[1]/div[2]/span[2]");        
+    By afterDate_locator = By.xpath("(//span[@class=\"u-bold\"])[1]");  
+    String doctorNameBefore;
+
+    // Compare doctor details
+    public String compareDetails() {
+        doctorNameBefore = driver.findElement(beforeName).getText().trim();
+        return doctorNameBefore;
+    }
     
-    By afterName = By.xpath("//*[@id=\"container\"]/div[2]/div/div[1]/div/div[1]/div[3]/div/div[2]/div[1]");
-    By beforeName = By.xpath("//*[@id=\"container\"]/div/div[4]/div/div[1]/div/div[7]/div[1]/div/div[1]/div[2]/a/div/h2");
-  
-    By aftertime = By.xpath("//*[@id=\"container\"]/div[2]/div/div[1]/div/div[1]/div[2]/div[1]/div[2]/span[2]");
-    By beforetime = By.xpath("//*[@id=\"container\"]/div/div[4]/div/div[1]/div/div[7]/div[2]/div/div/div/div[2]/div[2]/div/div[2]/div[1]/span");
-  
-  
-
-    public String bookSlot() throws InterruptedException {
-    	
+    
+    public boolean bookSlot() throws InterruptedException {
+    	System.out.println("doc name"+doctorNameBefore);
         driver.findElement(bookButton).click();
-        Thread.sleep(3000);
-        //check available dates
+        
+       
+        
+        Thread.sleep(2000);
         List<WebElement> timesFrames = driver.findElements(slots);
-        String date_availability = "";
-        String before_date = "";
-        //navigate to available dates
+        String beforeTimeString = "";
+        String afterTimeString = "";
+        String selectedDate = "";
+        List<WebElement>selectedDate_list=driver.findElements(By.xpath("//div[@class='u-t-capitalize']"));
+        int i=0;
         for (WebElement seat : timesFrames) {
-            if (!(seat.getText().contains("No"))) {
-                date_availability = seat.getText();
-                System.out.println(date_availability);
+            
+        	if (!(seat.getText().contains("No"))) {
                 seat.click();
+                selectedDate =selectedDate_list.get(i).getText();
+                Thread.sleep(4000);
+                System.out.println("Selected Date: " + selectedDate);
                 break;
-            } else {
-                System.out.println(seat.getText());
-                before_date = driver.findElement(By.xpath("//button[@data-qa-id='next_slots']")).getText();
-                System.out.println(before_date);
             }
+        	i+=1;
         }
-  
-
-        Thread.sleep(1000);
-        //check available timeslots
-        List<WebElement> slotElements = driver.findElements(By.xpath("//div[@data-qa-id='slot_time']"));
-
-        // Click on the first available slot
-        for (WebElement slot : slotElements) {
+        // Capture the time slots and proceed
+        List<WebElement> Slots = driver.findElements(By.xpath("//div[@data-qa-id='slot_time']"));
+        for (WebElement slot : Slots) {
+            beforeTimeString = slot.getText(); 
             slot.click();
             break;
         }
+        boolean doctor_matched=false;
+        String doctorNameAfter = driver.findElement(afterName).getText().trim();
+        if (doctorNameBefore.equals(doctorNameAfter)) {
+        	doctor_matched=true;
+            System.out.println("Doctor name matches.");
+        } else {
+            System.out.println("Doctor name does not match!");
+        }
         
- 
-        String after_date = driver.findElement(By.xpath("(//span[@class='u-bold'])[1]")).getText();
-        System.out.println(before_date + "  " + after_date);
-       
-        String aftername1=driver.findElement(afterName).getText().trim();
-        String beforename1=driver.findElement(beforeName).getText().trim();
         
-        boolean name_matched=aftername1.equals(beforename1);
-        if(aftername1.contains(beforename1)){
-        	System.out.println("BeforeName and afterName is  same");
-        	
-        	
+        afterTimeString = driver.findElement(this.afterTime).getText(); // Capture the after time as String
+        System.out.println("Before Time: " + beforeTimeString + " | After Time: " + afterTimeString);
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH); // Time formatter
+        LocalTime beforeTime = LocalTime.parse(beforeTimeString, timeFormatter); 
+        LocalTime afterTime = LocalTime.parse(afterTimeString, timeFormatter);  
+        boolean time_matched=false;
+        if (beforeTime.equals(afterTime)) {
+        	 time_matched=true;
+            System.out.println("Time has been matched.");
+        } else {
+            System.out.println("Time has not been matched.");
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        String formattedDate = "";
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
+
+        if (selectedDate.contains("Today")) {
+            formattedDate = today.format(dateFormatter); 
+        } else if (selectedDate.contains("Tomorrow")) {
+            formattedDate = tomorrow.format(dateFormatter); 
+        } else {
+            formattedDate = selectedDate;
+        }
+        
+        String afterDate=driver.findElement(afterDate_locator).getText();
+        Thread.sleep(2000);
+        System.out.println("Formatted Selected Date: " + formattedDate);
+        if (formattedDate.equals(afterDate)) {
+        	System.out.println("Dates same");
         }
         else {
-        	System.out.println("BeforeName AND afterName is not same");
+        	System.out.println("Dates  not same");
         }
-        
-        String before_time1 = driver.findElement(By.xpath("//div[@data-qa-id='slot_time']/span")).getText();
-	 	String after_time1 = driver.findElement(By.xpath("(//span[@class='u-bold'])[2]")).getText();
-	 	System.out.println(before_date+"  "+after_date);
-	 	
-	 	Boolean time_matched = false;
-	 	if(before_time1.contains(after_time1)) {
-	 		System.out.println("Time is been Matched");
-	 		time_matched=true;
-	 	}
-	 	else {
-	 		System.out.println("Time is not matched");
-	 	}
-        // Return status message based on matching
-        if ( name_matched&&time_matched) {
-            System.out.println("Successfully Slot is Booked");
-            return "Successfully Slot is Booked";
-        } else {
-            System.out.println("Slot is not Booked");
-            return "Slot is not Booked";
-        }
-    }
-   
 
-   
+      
+      
+        
+    
+        return doctor_matched && time_matched;
+        
+
+      
+        
+    		   
+
+}
+
+      
 }
